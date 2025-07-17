@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
+using System;
 
 public class GambleController : MonoBehaviour
 {
@@ -42,9 +43,13 @@ public class GambleController : MonoBehaviour
     internal bool gambleStart = false; // Indicates if the gamble has started
     internal bool isResult = false; // Indicates if the result has been received
     private bool isAutoSpinOn;
-
+    private string[] cardSuits = new string[] { "Hearts", "Diamonds", "Clubs", "Spades" };
+    private cardStruct dealerCard = new cardStruct();
+    private cardStruct playerCard = new cardStruct();
+    private cardStruct spare1Card = new cardStruct();
+    private cardStruct spare2Card = new cardStruct();
     private Tweener Gamble_Tween_Scale = null; // Tweener for scaling the double button
-
+    private bool isOut = false;
     #region Initialization
 
     private void Start()
@@ -60,10 +65,10 @@ public class GambleController : MonoBehaviour
         if (m_Collect_Button)
         {
             m_Collect_Button.onClick.RemoveAllListeners();
-            m_Collect_Button.onClick.AddListener(OnReset);
+            m_Collect_Button.onClick.AddListener(() => { OnReset(); slotController.GambleCollect(); });
         }
 
-        // Double Button Setup
+        //Double Button Setup
         if (m_Double_Button)
         {
             m_Double_Button.onClick.RemoveAllListeners();
@@ -90,6 +95,7 @@ public class GambleController : MonoBehaviour
     // Starts the gamble game
     void StartGamblegame(bool isRepeat = false)
     {
+        isOut = false;
         if (GambleEnd_Object) GambleEnd_Object.SetActive(false); // Hide end screen
 
         if (!isRepeat)
@@ -106,20 +112,18 @@ public class GambleController : MonoBehaviour
         loadingScreen.SetActive(true); // Show loading screen
 
         StartCoroutine(loadingRoutine()); // Start loading routine
-        StartCoroutine(GambleCoroutine()); // Start gamble coroutine
+        StartCoroutine(GambleCoroutine(isRepeat)); // Start gamble coroutine
     }
 
     // Resets the game and collects winnings
     private void OnReset()
     {
-        
-        if (slotController) slotController.GambleCollect(); // Collect winnings
-        NormalCollectFunction(); // Reset the gamble game
-
+        //  if (slotController) slotController.GambleCollect(); // Collect winnings
         if (isAutoSpinOn)
         {
             slotController.AutoSpin();
         }
+        NormalCollectFunction(); // Reset the gamble game
     }
 
     // Normal collect function
@@ -142,38 +146,87 @@ public class GambleController : MonoBehaviour
         DealerCard_Script.once = false;
 
         toggleDoubleButton(false); // Disable double button
+
     }
 
     #endregion
 
     #region Card Handling
-
-    // Compute the card sprites based on the received message
-    private void ComputeCards()
+    private cardStruct ChoseARandomeCard(int val = -1)
     {
-        highcard_Sprite = CardSet(socketManager.myMessage.highCard.suit, socketManager.myMessage.highCard.value);
-        lowcard_Sprite = CardSet(socketManager.myMessage.lowCard.suit, socketManager.myMessage.lowCard.value);
-        spare1card_Sprite = CardSet(socketManager.myMessage.exCards[0].suit, socketManager.myMessage.exCards[0].value);
-        spare2card_Sprite = CardSet(socketManager.myMessage.exCards[1].suit, socketManager.myMessage.exCards[1].value);
+        cardStruct cardx = new cardStruct();
+        string suit;
+        int value;
+
+        int index = UnityEngine.Random.Range(0, cardSuits.Length);
+        suit = cardSuits[index];
+
+        if (val == -1)
+        {
+            value = UnityEngine.Random.Range(0, 13);
+
+        }
+        else
+        {
+            value = val;
+        }
+        cardx.suit = suit;
+        cardx.value = value;
+        return cardx;
+    }
+    private cardStruct FindUniqueCard()
+    {
+        cardStruct newCard = null;
+        newCard = ChoseARandomeCard();
+
+        if (newCard == dealerCard && newCard == playerCard)
+        {
+            return FindUniqueCard();
+        }
+        else
+        {
+            return newCard;
+        }
+    }
+    // Compute the card sprites based on the received message
+    internal void ComputeCards()
+    {
+        //dealerCard = new cardStruct();
+        //playerCard = new cardStruct();
+        //spare1Card = new cardStruct();
+        //spare2Card = new cardStruct();
+
+        dealerCard = ChoseARandomeCard(socketManager.GambleData.payload.cards.dealerCard - 1);
+        playerCard = ChoseARandomeCard(socketManager.GambleData.payload.cards.playerCard - 1);
+        spare1Card = FindUniqueCard();
+        spare2Card = FindUniqueCard();
+
+
+
+        highcard_Sprite = CardSet(dealerCard.suit, dealerCard.value);
+        lowcard_Sprite = CardSet(playerCard.suit, playerCard.value);
+        spare1card_Sprite = CardSet(spare1Card.suit, spare1Card.value);
+        spare2card_Sprite = CardSet(spare2Card.suit, spare2Card.value);
     }
 
     // Determines the sprite for a given card suit and value
-    private Sprite CardSet(string suit, string value)
+    private Sprite CardSet(string suit, int value)
     {
+
         Sprite tempSprite = null;
         switch (suit.ToUpper())
         {
             case "HEARTS":
-                tempSprite = GetCardSprite(HeartSpriteList, value);
+                tempSprite = HeartSpriteList[value];
                 break;
             case "DIAMONDS":
-                tempSprite = GetCardSprite(DiamondSpriteList, value);
+                tempSprite = DiamondSpriteList[value];
                 break;
             case "CLUBS":
-                tempSprite = GetCardSprite(ClubSpriteList, value);
+                tempSprite = ClubSpriteList[value];
                 break;
             case "SPADES":
-                tempSprite = GetCardSprite(SpadeSpriteList, value);
+                tempSprite = SpadeSpriteList[value];
                 break;
             default:
                 Debug.LogError("Invalid Suit: " + suit);
@@ -182,38 +235,37 @@ public class GambleController : MonoBehaviour
         return tempSprite;
     }
 
-    // Helper function to get the correct sprite from a sprite list based on value
-    private Sprite GetCardSprite(Sprite[] spriteList, string value)
-    {
-        switch (value.ToUpper())
-        {
-            case "A": return spriteList[0];
-            case "K": return spriteList[12];
-            case "Q": return spriteList[11];
-            case "J": return spriteList[10];
-            default:
-                int myval = int.Parse(value);
-                return spriteList[myval - 1];
-        }
-    }
+    //// Helper function to get the correct sprite from a sprite list based on value
+    //private Sprite GetCardSprite(Sprite[] spriteList, string value)
+    //{
+    //    switch (value.ToUpper())
+    //    {
+    //        case "A": return spriteList[0];
+    //        case "K": return spriteList[12];
+    //        case "Q": return spriteList[11];
+    //        case "J": return spriteList[10];
+    //        default:
+    //            int myval = int.Parse(value);
+    //            return spriteList[myval - 1];
+    //    }
+    //}
 
     #endregion
 
     #region Coroutines
 
     // Main coroutine for handling the gamble process
-    IEnumerator GambleCoroutine()
+    IEnumerator GambleCoroutine(bool isRepeate = false)
     {
         // Reset all card states
         for (int i = 0; i < allcards.Count; i++)
         {
             allcards[i].once = false;
         }
-
-        socketManager.OnGamble(); // Send gamble request
+        if (!isRepeate) socketManager.OnGamble();
 
         yield return new WaitUntil(() => socketManager.isResultdone); // Wait for result
-        ComputeCards(); // Compute card sprites
+        
         gambleStart = true; // Mark gamble as started
     }
 
@@ -238,7 +290,7 @@ public class GambleController : MonoBehaviour
     private IEnumerator NewCollectRoutine()
     {
         isResult = false;
-        socketManager.OnCollect(); // Send collect request
+        socketManager.OnCollect(); // Send collect request                                        //hh
 
         yield return new WaitUntil(() => socketManager.isResultdone); // Wait for result
         isResult = true; // Mark result as received
@@ -252,6 +304,7 @@ public class GambleController : MonoBehaviour
         yield return new WaitForSeconds(2);
         slotController.updateBalance();
         if (gamble_game) gamble_game.SetActive(false);
+
         allcards.ForEach((element) =>
         {
             element.Card_Button.image.sprite = cardCover;
@@ -262,8 +315,11 @@ public class GambleController : MonoBehaviour
         toggleDoubleButton(false);
         if (isAutoSpinOn)
         {
+
+
             slotController.AutoSpin();
         }
+
     }
 
     #endregion
@@ -273,16 +329,10 @@ public class GambleController : MonoBehaviour
     // Get the correct card sprite based on the player's result
     internal Sprite GetCard()
     {
-        if (socketManager.myMessage.playerWon)
-        {
-            if (DealerCard_Script) DealerCard_Script.cardImage = lowcard_Sprite;
-            return highcard_Sprite;
-        }
-        else
-        {
-            if (DealerCard_Script) DealerCard_Script.cardImage = highcard_Sprite;
-            return lowcard_Sprite;
-        }
+        if (DealerCard_Script) DealerCard_Script.cardImage = highcard_Sprite;
+        return lowcard_Sprite;
+
+
     }
 
     // Flip all the cards when the game ends
@@ -309,15 +359,23 @@ public class GambleController : MonoBehaviour
 
         if (DealerCard_Script) DealerCard_Script.FlipMyObject();
 
-        if (socketManager.myMessage.playerWon)
+        if (socketManager.GambleData.payload.playerWon)                 //hh
         {
-            winamount.text = "YOU WIN\n" + socketManager.myMessage.currentWining.ToString();
+            winamount.text = "YOU WIN\n" + socketManager.ResultData.payload.winAmount.ToString();
+            // slotController.TotalWin_text.text =  socketManager.GambleData.payload.currentWinning.ToString();
             if (GambleEnd_Object) GambleEnd_Object.SetActive(true);
         }
         else
         {
             winamount.text = "YOU LOSE\n0";
+            //  slotController.TotalWin_text.text = "0";
             StartCoroutine(Collectroutine());
+            //if(!isOut)
+            //{
+            //    socketManager.OnCollect();
+            //    isOut = true;
+            //}
+
         }
     }
 
@@ -352,7 +410,16 @@ public class GambleController : MonoBehaviour
             Gamble_Tween_Scale.Kill();
             doubleButton.gameObject.GetComponent<RectTransform>().localScale = Vector3.one;
         }
-    }
 
+
+       
+    }
     #endregion
+}
+
+[Serializable]
+public class cardStruct
+{
+    public string suit;
+    public int value;
 }

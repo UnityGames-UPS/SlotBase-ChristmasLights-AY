@@ -6621,9 +6621,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slotManager: {fileID: 2046803210}
   uiManager: {fileID: 377874625}
+  bonusController: {fileID: 0}
   bonusdata: []
   JSManager: {fileID: 1043400122}
-  testToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3N2JhM2QzOTgxYmU0MzlkMjkyYzgzYSIsInVzZXJuYW1lIjoiTWVldCIsInJvbGUiOiJwbGF5ZXIiLCJpYXQiOjE3NDMxNTY2NDIsImV4cCI6MTc0Mzc2MTQ0Mn0.FGd4TqNDQRoeZz7xe0x-4CBUSb-6fXIAapm9cKBMhT4
+  testToken: 7bdc7f2ab11c4bc88196d72b5de79836
 --- !u!1 &507580410
 GameObject:
   m_ObjectHideFlags: 0
@@ -10121,6 +10122,7 @@ MonoBehaviour:
   selected_GameObject: {fileID: 1833456038}
   text_AnimScript: {fileID: 1833456043}
   _bonusManager: {fileID: 207527277}
+  _socketManager: {fileID: 500036492}
 --- !u!114 &743375676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11482,6 +11484,7 @@ MonoBehaviour:
   selected_GameObject: {fileID: 146303293}
   text_AnimScript: {fileID: 146303298}
   _bonusManager: {fileID: 207527277}
+  _socketManager: {fileID: 500036492}
 --- !u!114 &821674818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11620,6 +11623,7 @@ MonoBehaviour:
   selected_GameObject: {fileID: 708751666}
   text_AnimScript: {fileID: 708751671}
   _bonusManager: {fileID: 207527277}
+  _socketManager: {fileID: 500036492}
 --- !u!114 &825656312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11997,6 +12001,7 @@ MonoBehaviour:
   selected_GameObject: {fileID: 1387212246}
   text_AnimScript: {fileID: 1387212251}
   _bonusManager: {fileID: 207527277}
+  _socketManager: {fileID: 500036492}
 --- !u!1 &858280764
 GameObject:
   m_ObjectHideFlags: 0
@@ -15145,6 +15150,7 @@ MonoBehaviour:
   selected_GameObject: {fileID: 1017486646}
   text_AnimScript: {fileID: 1017486651}
   _bonusManager: {fileID: 207527277}
+  _socketManager: {fileID: 500036492}
 --- !u!114 &1132142823
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22415,7 +22421,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1825416280
 RectTransform:
   m_ObjectHideFlags: 0
@@ -32143,6 +32149,7 @@ MonoBehaviour:
   cardImage: {fileID: 0}
   Card_Button: {fileID: 1565490524572987379}
   gambleController: {fileID: 1541726218}
+  SocketManager: {fileID: 500036492}
 --- !u!114 &3910544675855881988
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36858,6 +36865,7 @@ MonoBehaviour:
   cardImage: {fileID: 0}
   Card_Button: {fileID: 7409443315734229377}
   gambleController: {fileID: 1541726218}
+  SocketManager: {fileID: 500036492}
 --- !u!82 &4840058995302230495
 AudioSource:
   m_ObjectHideFlags: 0
@@ -36988,6 +36996,7 @@ MonoBehaviour:
   cardImage: {fileID: 0}
   Card_Button: {fileID: 8586416234026659656}
   gambleController: {fileID: 1541726218}
+  SocketManager: {fileID: 500036492}
 --- !u!114 &5181876199164639082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40533,6 +40542,7 @@ MonoBehaviour:
   cardImage: {fileID: 0}
   Card_Button: {fileID: 3910544675855881988}
   gambleController: {fileID: 1541726218}
+  SocketManager: {fileID: 0}
 --- !u!114 &7409443315734229377
 MonoBehaviour:
   m_ObjectHideFlags: 0

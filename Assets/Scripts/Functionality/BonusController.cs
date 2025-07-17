@@ -34,23 +34,23 @@ public class BonusController : MonoBehaviour
 
     int index = 0;
 
-    internal void GetSuitCaseList(List<int> values)
+    internal void StartBonus()
     {
         amount = 0;
         index = 0;
         CaseValues.Clear();
         CaseValues.TrimExcess();
-        CaseValues = values;
+       
         isGameOver = false;
         if (mainamount_Text) mainamount_Text.text = "0";
 
-        foreach (SelectBonusGift cases in BonusCases)
+        for (int i = 0; i < BonusCases.Count; i++)
         {
-            cases.ResetGift();
-        }
+            BonusCases[i].ResetGift(i);
 
+        }
         if (raycastPanel) raycastPanel.SetActive(false);
-        StartBonus();
+        StartBonusGame();
     }
 
     internal void enableRayCastPanel(bool choice)
@@ -62,6 +62,7 @@ public class BonusController : MonoBehaviour
     {
         if (slotManager) slotManager.CheckWinPopups();
         _audioManager.SwitchBGSound(false);
+        slotBehaviour.updateBalance(true);
         if (Bonus_Object) Bonus_Object.SetActive(false);
     }
 
@@ -69,7 +70,7 @@ public class BonusController : MonoBehaviour
     {
         double value = 0;
 
-        value = CaseValues[index] * SocketManager.initialData.Bets[slotBehaviour.BetCounter];
+       // value = CaseValues[index] * SocketManager.initialData.Bets[slotBehaviour.BetCounter];
 
         index++;
 
@@ -99,9 +100,14 @@ public class BonusController : MonoBehaviour
         }
     }
 
-    private void StartBonus()
+    private void StartBonusGame()
     {
         _audioManager.SwitchBGSound(true);
         if (Bonus_Object) Bonus_Object.SetActive(true);
+    }
+    internal void UpdateTotalText(double amt)
+    {
+        amount += amt;
+        if (mainamount_Text) mainamount_Text.text = amount.ToString("f3");
     }
 }
