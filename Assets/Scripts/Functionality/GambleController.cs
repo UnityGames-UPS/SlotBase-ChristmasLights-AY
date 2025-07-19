@@ -283,6 +283,7 @@ public class GambleController : MonoBehaviour
     {
         ToggleCards(false);
         float fillAmount = 1;
+        yield return new WaitUntil(() => gambleStart);
         while (fillAmount > 0.1)
         {
             fillAmount -= Time.deltaTime;
@@ -290,7 +291,6 @@ public class GambleController : MonoBehaviour
             if (fillAmount == 0.1) yield break;
             yield return null;
         }
-        yield return new WaitUntil(() => gambleStart);
         slider.fillAmount = 0;
         yield return new WaitForSeconds(1f);
         loadingScreen.SetActive(false);

@@ -737,12 +737,13 @@ public class SlotBehaviour : MonoBehaviour
             ActivateGamble();
             ToggleButtonGrp(true);
             IsSpinning = false;
+            if (IsTurboOn) yield return new WaitForSeconds(1f);
+            else yield return new WaitForSeconds(2f);
         }
         else
         {
             //ActivateGamble();
-            if (IsTurboOn) yield return new WaitForSeconds(1f);
-            else yield return new WaitForSeconds(2f);
+            
             IsSpinning = false;
         }
     }

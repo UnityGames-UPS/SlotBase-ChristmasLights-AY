@@ -43,7 +43,7 @@ public class CardFlip : MonoBehaviour
     private IEnumerator FlipMainObject()
     {
         gambleController.ToggleCards(false);
-        shakeTween = Card_transform.DOShakeRotation(999f, new Vector3(0, 0, 15), 20, 90, true).SetEase(Ease.Linear);
+        shakeTween = Card_transform.DOShakeRotation(999f, new Vector3(0, 0, 5), 20, 90, true).SetEase(Ease.Linear);
         SocketManager.GambleDraw();
 
 
