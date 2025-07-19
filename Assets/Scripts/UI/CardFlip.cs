@@ -15,7 +15,7 @@ public class CardFlip : MonoBehaviour
     private RectTransform Card_transform;
 
     internal bool once = false;
-
+    private Tween shakeTween;
     private void Start()
     {
         Card_transform = Card_Button.GetComponent<RectTransform>();
@@ -31,6 +31,7 @@ public class CardFlip : MonoBehaviour
             Card_transform.DORotate(new Vector3(0, 0, 0), 1, RotateMode.FastBeyond360);
             once = true;
             DOVirtual.DelayedCall(0.3f, changeSprite);
+            
         }
     }
 
@@ -41,8 +42,15 @@ public class CardFlip : MonoBehaviour
 
     private IEnumerator FlipMainObject()
     {
+        gambleController.ToggleCards(false);
+        shakeTween = Card_transform.DOShakeRotation(999f, new Vector3(0, 0, 15), 20, 90, true).SetEase(Ease.Linear);
         SocketManager.GambleDraw();
+
+
+        // Shake the card indefinitely
         yield return new WaitUntil(() => SocketManager.isResultdone);
+        shakeTween.Kill();
+        shakeTween = null;
         gambleController.ComputeCards(); // Compute card sprites
         cardImage = gambleController.GetCard();
         FlipMyObject();

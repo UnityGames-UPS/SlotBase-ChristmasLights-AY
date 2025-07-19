@@ -728,7 +728,10 @@ public class SlotBehaviour : MonoBehaviour
         yield return new WaitUntil(() => !CheckPopups);
 
         if (SocketManager.ResultData.payload.winAmount > 0)
+        {
             WinningsAnim(true);
+           
+        }
         if (!IsAutoSpin)
         {
             ActivateGamble();
@@ -737,7 +740,7 @@ public class SlotBehaviour : MonoBehaviour
         }
         else
         {
-            ActivateGamble();
+            //ActivateGamble();
             if (IsTurboOn) yield return new WaitForSeconds(1f);
             else yield return new WaitForSeconds(2f);
             IsSpinning = false;
@@ -864,12 +867,12 @@ public class SlotBehaviour : MonoBehaviour
     {
         if (IsStart)
         {
-            WinTween = TotalWin_text.transform.DOScale(new Vector2(1.5f, 1.5f), 1f).SetLoops(-1, LoopType.Yoyo).SetDelay(0);
+           // WinTween = TotalWin_text.transform.DOScale(new Vector2(1.5f, 1.5f), 1f).SetLoops(-1, LoopType.Yoyo).SetDelay(0);
         }
         else
         {
             WinTween.Kill();
-            TotalWin_text.transform.localScale = Vector3.one;
+           // TotalWin_text.transform.localScale = Vector3.one;
         }
     }
     internal void SetInitialUI()

@@ -147,6 +147,7 @@ public class GambleController : MonoBehaviour
 
         toggleDoubleButton(false); // Disable double button
 
+
     }
 
     #endregion
@@ -252,6 +253,14 @@ public class GambleController : MonoBehaviour
 
     #endregion
 
+    internal void ToggleCards(bool isTrue)
+    {
+        for (int i = 0; i < allcards.Count; i++)
+        {
+            allcards[i].Card_Button.interactable = isTrue;
+        }
+    }
+
     #region Coroutines
 
     // Main coroutine for handling the gamble process
@@ -272,6 +281,7 @@ public class GambleController : MonoBehaviour
     // Coroutine for handling the loading screen
     IEnumerator loadingRoutine()
     {
+        ToggleCards(false);
         float fillAmount = 1;
         while (fillAmount > 0.1)
         {
@@ -284,6 +294,7 @@ public class GambleController : MonoBehaviour
         slider.fillAmount = 0;
         yield return new WaitForSeconds(1f);
         loadingScreen.SetActive(false);
+        ToggleCards(true);
     }
 
     // Coroutine for collecting winnings

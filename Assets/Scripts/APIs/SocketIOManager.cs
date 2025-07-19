@@ -42,7 +42,7 @@ public class SocketIOManager : MonoBehaviour
     private SocketManager manager;
 
    // protected string TestSocketURI = "https://game-crm-rtp-backend.onrender.com/";
-     protected string TestSocketURI = "https://mx2md3l5-5000.inc1.devtunnels.ms/";
+   [SerializeField]  protected string TestSocketURI = "https://mx2md3l5-5000.inc1.devtunnels.ms/";
     protected string SocketURI = null;
     //protected string SocketURI = "https://7p68wzhv-5000.inc1.devtunnels.ms/";
 
