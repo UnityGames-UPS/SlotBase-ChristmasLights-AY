@@ -218,7 +218,11 @@ public class SocketIOManager : MonoBehaviour
         isConnected = false;
         ResetPingRoutine();
     } //Back2 end
-
+    void CloseGame()
+    {
+        Debug.Log("Unity: Closing Game");
+        StartCoroutine(CloseSocket());
+    }
     private void OnPongReceived(string data) //Back2 Start
     {
         Debug.Log("✅ Received pong from server.");
